@@ -1,0 +1,40 @@
+#!/bin/bash -ex
+exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+uname -a
+cd ~
+su - mqm -c 'dspmqver'
+su - mqm -c 'crtmqm -oa user -u DLQ QMR01'
+su - mqm -c 'strmqm QMR01'
+cat <<EOF >/tmp/CreateRemoteQs.mqsc
+DEF QL(DLQ) REPLACE
+DEF QL(QL.A) REPLACE
+
+DEF CHL(QMR01.QM01) CHLTYPE(SDR) REPLACE +
+TRPTYPE(TCP) CONNAME('52.86.146.171(1414)') +
+XMITQ(QM01)
+DEF QL(QM01) REPLACE USAGE(XMITQ)
+
+DEF QR(QLMT01) REPLACE +
+RNAME(QL.B) RQMNAME(QM01) +
+XMITQ(QM01)
+
+DEF CHL(QM01.QMR01) CHLTYPE(RCVR) REPLACE +
+TRPTYPE(TCP)
+
+DEF LISTENER(LISTENER.TCP) TRPTYPE(TCP) PORT(9000) CONTROL(QMGR)
+START LISTENER(LISTENER.TCP)
+START CHL(QMR01.QM01)
+START CHL(QM01.QMR01)
+
+ALTER QMGR CHLAUTH(DISABLED)
+ALTER QMGR CONNAUTH(' ')
+REFRESH SECURITY
+
+
+
+EOF
+su - mqm -c 'runmqsc QMR01 < /tmp/CreateRemoteQs.mqsc > /tmp/CreateRemoteQs-report.log'
+cat /tmp/CreateRemoteQs-report.log
+su - mqm -c 'dspmq'
+
+
