@@ -1,0 +1,39 @@
+#!/bin/bash -ex
+exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+uname -a
+cd ~
+su - mqm -c 'dspmqver'
+mkdir ssl
+cd ssl
+mkdir qm01
+mkdir qmr01
+cd qm01
+runmqckm -keydb -create -db key.kdb -pw 12345 -type cms -expire 365 -stash 
+runmqckm -cert -create -db key.kdb -pw 12345 -label ibmwebspheremqqm01 -dn "CN=MQFELLOWEAST,O=ABC,C=US" -size 1024 -x509version 3 -expire 365
+runmqckm -cert -extract -db key.kdb -pw 12345 -label ibmwebspheremqqm01 -target qm01.arm -format ascii
+cp qm01.arm ../qmr01
+
+cd ../qmr01
+runmqckm -keydb -create -db key.kdb -pw 12345 -type cms -expire 365 -stash 
+runmqckm -cert -create -db key.kdb -pw 12345 -label ibmwebspheremqqmr01 -dn "CN=MQFELLOWWEST,O=ABC,C=US" -size 1024 -x509version 3 -expire 365
+runmqckm -cert -extract -db key.kdb -pw 12345 -label ibmwebspheremqqmr01 -target qmr01.arm -format ascii
+cp qmr01.arm ../qm01
+
+cd ../qm01
+runmqckm -cert -add -db key.kdb -pw 12345 -label ibmwebspheremqqmr01 -file qmr01.arm -format ascii
+
+cd ../qmr01
+runmqckm -cert -add -db key.kdb -pw 12345 -label ibmwebspheremqqm01 -file qm01.arm -format ascii
+
+cd ~
+ls -al ssl/qm01
+ls -al ssl/qmr01
+
+cd ssl
+aws s3 sync . s3://mqfellow-us-east-1/mq-certs/
+
+
+
+
+
+
