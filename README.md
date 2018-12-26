@@ -13,7 +13,7 @@ It uses [east-userdata](https://github.com/mqfellow/distributed-qmanager/blob/ma
 
 ### Self-signed Certificate SSL Setup
 
-[Manual and automatic installation](https://github.com/mqfellow/distributed-qmanager/blob/master/self-signed-cert.md)
+[Manual installation](https://github.com/mqfellow/distributed-qmanager/blob/master/self-signed-cert.md)
 
 ### TODO
 
