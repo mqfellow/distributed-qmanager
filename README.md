@@ -9,8 +9,12 @@ Similarly, the mq-install-west.sh script will install the stack on AWS West regi
 
 To delete for each region, run the mq-delete.sh script.
 
+### Self-signed Certificate SSL Setup
+
+[Manual and automatic installation](https://github.com/mqfellow/distributed-qmanager/blob/master/self-signed-cert.md)
+
 ### TODO
 
-* SSL
+* SSL-signed
 * Backup to S3
 
