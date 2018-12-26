@@ -27,7 +27,7 @@ The MQ servers should start with self-signed SSL enabled for both sender and rec
 
 ### TODO
 
-* SSL-signed
+* SSL-signed - https://www.youtube.com/watch?v=VHX_KGNc65o&list=PLpFOFgc5UfWE4pHHIweA8TGF-agIG42TT
 * Backup to S3
 * provision, rehydrate, destroy
 
