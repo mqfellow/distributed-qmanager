@@ -1,0 +1,49 @@
+#!/bin/bash -ex
+exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+uname -a
+cd ~
+su - mqm -c 'dspmqver'
+su - mqm -c 'crtmqm -oa user -u DLQ QM01'
+cd /tmp
+aws s3 sync s3://mqfellow-us-east-1/mq-certs/ .
+cp -rf qm01/* /var/mqm/qmgrs/QM01/ssl/
+chown -R mqm.mqm /var/mqm/qmgrs/QM01/ssl/
+chmod -R 600 /var/mqm/qmgrs/QM01/ssl/
+cd ~
+su - mqm -c 'strmqm QM01'
+cat <<EOF >/tmp/CreateLocalQs.mqsc
+DEF QL(DLQ) REPLACE
+DEF QL(QL.B) REPLACE
+
+DEF CHL(QM01.QMR01) CHLTYPE(SDR) REPLACE +
+TRPTYPE(TCP) CONNAME('52.42.174.228(9000)') +
+XMITQ(QMR01)
+DEF QL(QMR01) REPLACE USAGE(XMITQ)
+
+DEF QR(QRMT01) REPLACE +
+RNAME(QL.A) RQMNAME(QMR01) +
+XMITQ(QMR01)
+
+DEF CHL(QMR01.QM01) CHLTYPE(RCVR) REPLACE +
+TRPTYPE(TCP)
+
+DEF LISTENER(LISTENER.TCP) TRPTYPE(TCP) PORT(1414) CONTROL(QMGR)
+START LISTENER(LISTENER.TCP)
+START CHL(QM01.QMR01) 
+START CHL(QMR01.QM01)
+
+ALTER QMGR CHLAUTH(DISABLED)
+ALTER QMGR CONNAUTH(' ')
+
+ALTER CHANNEL(QM01.QMR01) CHLTYPE(SDR) SSLCIPH(TLS_RSA_WITH_AES_256_CBC_SHA256)
+ALTER CHANNEL(QMR01.QM01) CHLTYPE(RCVR) SSLCIPH(TLS_RSA_WITH_AES_256_CBC_SHA256)
+REFRESH SECURITY TYPE(SSL)
+
+REFRESH SECURITY
+
+EOF
+su - mqm -c 'runmqsc QM01 < /tmp/CreateLocalQs.mqsc > /tmp/CreateLocalQs-report.log'
+cat /tmp/CreateLocalQs-report.log
+su - mqm -c 'dspmq'
+
+
