@@ -18,7 +18,12 @@ It uses [east-userdata](https://github.com/mqfellow/distributed-qmanager/blob/ma
 #### Automatic Installation
 
 Generate the self-signed ssl for qm01 and qmr01 and upload it to s3. This is the automated ssl script that is based on the [Manual installation](https://github.com/mqfellow/distributed-qmanager/blob/master/self-signed-cert.md). The generation of ssl is created inside the [userdata](https://github.com/mqfellow/distributed-qmanager/blob/master/generate-self-signed-ssl-config.txt). Create a folder gen-ssl-config and download/use the [mq-install-east.sh](https://github.com/mqfellow/distributed-qmanager/blob/master/mq-install-east.sh). Modify it to use the [userdata](https://github.com/mqfellow/distributed-qmanager/blob/master/generate-self-signed-ssl-config.txt) to generate ssl. It will also upload it in s3. Once the file certs are uploaded, delete the stack using the [mq-delete.sh](https://github.com/mqfellow/distributed-qmanager/blob/master/mq-delete.sh) script.
- 
+
+[dqmgr-userdata-local-self-signed-cert](https://github.com/mqfellow/distributed-qmanager/blob/master/dqmgr-userdata-local-self-signed-cert.txt) - Apply this userdata in [mq-install-east.sh](https://github.com/mqfellow/distributed-qmanager/blob/master/mq-install-east.sh) to create the east/qm01 stack that has the ssl configuration enabled.
+
+[dqmgr-userdata-remote-self-signed-cert](https://github.com/mqfellow/distributed-qmanager/blob/master/dqmgr-userdata-remote-self-signed-cert.txt) - Apply this userdata in [mq-install-west.sh](https://github.com/mqfellow/distributed-qmanager/blob/master/mq-install-west.sh) to create the west/qmr01 stack that has the ssl configuration enabled.
+
+The MQ servers should start with self-signed SSL enabled for both sender and receiver configuration.
 
 ### TODO
 
