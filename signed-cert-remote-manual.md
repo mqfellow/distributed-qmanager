@@ -2,6 +2,7 @@
 
 ### Generate CSR
 
+```
 $ rm -rf key* mq*
 $ runmqakm -keydb -create -db key.kdb -pw 12345 -stash
 bash-4.2$ ls -al
@@ -107,9 +108,12 @@ QktsuPB1TVNrI0xCmYlVoBeh2WgzhNHbtIlNVjsoOe8OWr0B4vBguJt/JVuJlbt8
 8oJ1pyLm6q3/nGCy3bzC+5iB+UH65Z4GGwtWSwU9ekkTbtjZVIIgkh+hgLo=
 -----END NEW CERTIFICATE REQUEST-----
 
+```
+
 ### Signing request to namecheap.com 
 
 https://www.namecheap.com/support/knowledgebase/article.aspx/467/67/how-to-generate-csr-certificate-signing-request-code
+
 https://ap.www.namecheap.com/domains/ssl/activate/5603594/domainName/productlist
 
 In namecheap dashboard, ensure that REDIRECT EMAIL - Catch All for the domain is enabled and pointed to your email address. It will allow you to receive the CSR validation email.
@@ -165,8 +169,10 @@ Source intruction - https://www.youtube.com/watch?v=rB_DLMm4tOY&list=PLpFOFgc5Uf
 Copy the files to /var/mqm/qmgrs/QMR01/ssl/signed-ssl - Using terminal or S3
 
 www_mqfellowwest_host.ca-bundle
+
 www_mqfellowwest_host.crt
 
+```
 $ ls -al
 total 36
 drwxr-sr-x. 2 mqm mqm  162 Dec 29 22:13 .
@@ -764,4 +770,8 @@ Ensure that the remote system has a valid personal certificate and restart the
 channel.
 
 It is expected as remote server uses self-signed cert.
+
+
+```
+
 
